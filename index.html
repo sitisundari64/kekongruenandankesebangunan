@@ -1,0 +1,509 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#5b5ce2">
+<title>MathLab IX | Kesebangunan Persegi Panjang</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+<style>
+:root{
+ --ink:#20234a;
+ --purple:#5b5ce2;
+ --cyan:#26b6c9;
+ --yellow:#ffd166;
+ --paper:#f6f7ff;
+}
+*{box-sizing:border-box}
+body{
+ font-family:'Nunito',sans-serif;
+ background:var(--paper);
+ color:var(--ink)
+}
+h1,h2,h3,.brand{
+ font-family:'Plus Jakarta Sans',sans-serif
+}
+.view{
+ display:none;
+ animation:enter .28s ease
+}
+.view.active{display:block}
+@keyframes enter{
+ from{opacity:0;transform:translateY(8px)}
+ to{opacity:1;transform:none}
+}
+.card{
+ background:white;
+ border:1px solid #e8e9fa;
+ border-radius:22px;
+ box-shadow:0 8px 25px #35378b0b
+}
+.btn{
+ border-radius:14px;
+ padding:11px 17px;
+ font-weight:900;
+ transition:.18s;
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ gap:8px
+}
+.btn:hover{
+ transform:translateY(-2px);
+ filter:brightness(1.03)
+}
+.btn-primary{
+ background:var(--purple);
+ color:white;
+ box-shadow:0 5px 0 #4142b2
+}
+.btn-soft{
+ background:#eeefff;
+ color:#4b4cc5
+}
+.btn-dark{
+ background:#24264f;
+ color:white
+}
+.navitem{
+ padding:10px 13px;
+ border-radius:12px;
+ font-weight:800;
+ color:#666987;
+ white-space:nowrap
+}
+.navitem.active,.navitem:hover{
+ background:#eeefff;
+ color:#4e4fc9
+}
+.tag{
+ font-size:11px;
+ font-weight:900;
+ letter-spacing:.08em;
+ text-transform:uppercase;
+ color:#6869cb
+}
+.progress{
+ height:9px;
+ background:#ececff;
+ border-radius:20px;
+ overflow:hidden
+}
+.progress>span{
+ display:block;
+ height:100%;
+ background:linear-gradient(90deg,#5b5ce2,#27b9c8);
+ border-radius:20px
+}
+.choice{
+ width:100%;
+ text-align:left;
+ border:2px solid #e8e9f5;
+ border-radius:14px;
+ padding:13px 15px;
+ font-weight:800;
+ background:white;
+ margin:6px 0
+}
+.choice:hover{
+ border-color:#7778ed;
+ background:#f8f8ff
+}
+.choice.correct{
+ border-color:#20aa78;
+ background:#eafff5
+}
+.choice.wrong{
+ border-color:#e66b72;
+ background:#fff1f1
+}
+.flip{
+ perspective:1000px;
+ min-height:190px;
+ cursor:pointer
+}
+.flip-inner{
+ position:relative;
+ transition:transform .55s;
+ transform-style:preserve-3d;
+ min-height:190px
+}
+.flip.flipped .flip-inner{
+ transform:rotateY(180deg)
+}
+.flip-front,.flip-back{
+ position:absolute;
+ inset:0;
+ backface-visibility:hidden;
+ border-radius:20px;
+ padding:22px;
+ display:flex;
+ flex-direction:column;
+ justify-content:center;
+ align-items:center;
+ text-align:center
+}
+.flip-back{
+ transform:rotateY(180deg);
+ background:#eefcf9
+}
+.tab{
+ padding:10px 14px;
+ border-radius:12px;
+ font-weight:900;
+ background:#f0f0ff;
+ color:#5b5ce2
+}
+.tab.active{
+ background:#5b5ce2;
+ color:white
+}
+.sticky{
+ background:#fff3b8;
+ border-radius:4px 4px 16px 4px;
+ padding:16px;
+ box-shadow:0 5px 12px #3332;
+ transform:rotate(-1deg)
+}
+.mathbox{
+ background:#f0f1ff;
+ border:1px dashed #a5a6ee;
+ border-radius:16px;
+ padding:15px
+}
+@media(max-width:640px){
+ .navitem{font-size:12px;padding:9px}
+ .hero-title{font-size:2rem}
+ .card{border-radius:18px}
+}
+</style>
+</head>
+
+<body>
+
+<header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-indigo-100">
+ <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+
+  <div class="flex items-center gap-3">
+   <div class="w-11 h-11 rounded-2xl bg-indigo-600 text-white grid place-items-center text-xl">
+    <i class="fa-solid fa-shapes"></i>
+   </div>
+
+   <div>
+    <div class="brand font-black text-lg">
+     MathLab <span class="text-indigo-600">IX</span>
+    </div>
+    <div class="text-xs font-bold text-slate-500">
+     TKA Matematika • SMP Kelas 9
+    </div>
+   </div>
+  </div>
+
+  <div class="flex items-center gap-2">
+   <button class="btn btn-soft text-sm" onclick="go('home')">
+    <i class="fa-solid fa-house"></i>
+    <span class="hidden sm:inline">Menu Utama</span>
+   </button>
+
+   <button id="audioBtn" class="btn btn-dark text-sm" onclick="toggleAudio()">
+    <i class="fa-solid fa-volume-xmark"></i>
+    <span>Audio OFF</span>
+   </button>
+  </div>
+ </div>
+
+ <nav class="max-w-7xl mx-auto px-3 pb-2 flex gap-1 overflow-x-auto" id="mainNav">
+  <button class="navitem active" data-view="home" onclick="go('home')">Beranda</button>
+  <button class="navitem" data-view="tujuan" onclick="go('tujuan')">Tujuan</button>
+  <button class="navitem" data-view="pemantik" onclick="go('pemantik')">Pemantik</button>
+  <button class="navitem" data-view="materi" onclick="go('materi')">Materi</button>
+  <button class="navitem" data-view="simulasi" onclick="go('simulasi')">Simulasi</button>
+  <button class="navitem" data-view="kuis" onclick="go('kuis')">Kuis</button>
+  <button class="navitem" data-view="games" onclick="go('games')">Games</button>
+  <button class="navitem" data-view="kesimpulan" onclick="go('kesimpulan')">Kesimpulan</button>
+  <button class="navitem" data-view="refleksi" onclick="go('refleksi')">Refleksi</button>
+ </nav>
+</header>
+
+<main class="max-w-7xl mx-auto px-4 py-7">
+
+<!-- MENU HOME -->
+<section id="home" class="view active">
+
+ <div class="rounded-[30px] overflow-hidden bg-gradient-to-br from-indigo-700 via-indigo-600 to-cyan-500 text-white p-7 md:p-12 relative">
+
+  <div class="absolute -right-8 -top-10 text-white/10 text-[230px]">
+   <i class="fa-solid fa-ruler-combined"></i>
+  </div>
+
+  <div class="relative max-w-3xl">
+   <span class="inline-flex bg-white/20 px-4 py-2 rounded-full text-xs font-black tracking-widest">
+    MISI MATEMATIKA • TKA SMP
+   </span>
+
+   <h1 class="hero-title text-3xl md:text-5xl font-black leading-tight mt-5">
+    Mengenal Kesebangunan, Mengukur Dunia!
+   </h1>
+
+   <p class="text-indigo-50 mt-4 text-lg max-w-2xl">
+    Jelajahi hubungan ukuran, skala, luas, dan keliling persegi panjang melalui tantangan yang dekat dengan kehidupan sehari-hari.
+   </p>
+
+   <button class="btn bg-yellow-300 text-indigo-950 mt-7 px-6 py-3" onclick="go('tujuan')">
+    Mulai Belajar
+    <i class="fa-solid fa-arrow-right"></i>
+   </button>
+  </div>
+ </div>
+
+ <div class="grid md:grid-cols-3 gap-4 mt-6">
+
+  <div class="card p-5 md:col-span-2">
+   <div class="flex items-center gap-4">
+
+    <img class="w-28 h-28 object-contain rounded-2xl bg-indigo-50"
+     src="https://i.ibb.co.com/hFJHmgp2/Desain-tanpa-judul-9.png"
+     alt="Ilustrasi pembelajaran matematika"
+     onerror="this.style.display='none'">
+
+    <div>
+     <div class="tag">Tantangan hari ini</div>
+     <h2 class="text-xl font-black mt-1">
+      Misi: Perbesar tanpa mengubah bentuk
+     </h2>
+     <p class="text-slate-600 mt-1 text-sm">
+      Bantu arsitek muda membuat rancangan taman dan poster dengan ukuran yang tetap proporsional.
+     </p>
+    </div>
+   </div>
+  </div>
+
+  <div class="card p-5">
+   <div class="tag">Peta belajar</div>
+   <div class="text-3xl font-black text-indigo-600 mt-2">
+    6 <span class="text-base text-slate-500">aktivitas</span>
+   </div>
+   <p class="text-sm text-slate-500">
+    Tujuan • Materi • Simulasi • Kuis • Games • Refleksi
+   </p>
+  </div>
+
+ </div>
+
+ <div class="mt-8">
+  <h2 class="text-2xl font-black">Pilih ruang belajarmu</h2>
+  <p class="text-slate-500 mb-4">
+   Setiap ruang membantumu menguasai satu tahap pembelajaran.
+  </p>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+
+   <button class="card p-4 text-left hover:-translate-y-1 transition" onclick="go('tujuan')">
+    <i class="fa-solid fa-bullseye text-2xl text-indigo-600"></i>
+    <b class="block mt-3">Tujuan</b>
+    <small class="text-slate-500">Target kompetensi</small>
+   </button>
+
+   <button class="card p-4 text-left hover:-translate-y-1 transition" onclick="go('pemantik')">
+    <i class="fa-solid fa-lightbulb text-2xl text-amber-500"></i>
+    <b class="block mt-3">Pemantik</b>
+    <small class="text-slate-500">Amati dan pikirkan</small>
+   </button>
+
+   <button class="card p-4 text-left hover:-translate-y-1 transition" onclick="go('materi')">
+    <i class="fa-solid fa-book-open text-2xl text-cyan-600"></i>
+    <b class="block mt-3">Materi</b>
+    <small class="text-slate-500">Belajar konsep</small>
+   </button>
+
+   <button class="card p-4 text-left hover:-translate-y-1 transition" onclick="go('simulasi')">
+    <i class="fa-solid fa-sliders text-2xl text-pink-500"></i>
+    <b class="block mt-3">Simulasi</b>
+    <small class="text-slate-500">Ubah ukuran</small>
+   </button>
+
+   <button class="card p-4 text-left hover:-translate-y-1 transition" onclick="go('kuis')">
+    <i class="fa-solid fa-clipboard-question text-2xl text-green-600"></i>
+    <b class="block mt-3">Kuis</b>
+    <small class="text-slate-500">Uji kemampuan</small>
+   </button>
+
+   <button class="card p-4 text-left hover:-translate-y-1 transition" onclick="go('games')">
+    <i class="fa-solid fa-puzzle-piece text-2xl text-orange-500"></i>
+    <b class="block mt-3">Games</b>
+    <small class="text-slate-500">Misi pasangan</small>
+   </button>
+
+   <button class="card p-4 text-left hover:-translate-y-1 transition" onclick="go('kesimpulan')">
+    <i class="fa-solid fa-medal text-2xl text-yellow-500"></i>
+    <b class="block mt-3">Kesimpulan</b>
+    <small class="text-slate-500">Rangkum ide</small>
+   </button>
+
+   <button class="card p-4 text-left hover:-translate-y-1 transition" onclick="go('refleksi')">
+    <i class="fa-solid fa-note-sticky text-2xl text-purple-500"></i>
+    <b class="block mt-3">Refleksi</b>
+    <small class="text-slate-500">Bagikan pemikiran</small>
+   </button>
+
+  </div>
+ </div>
+
+ <div class="card p-5 mt-6">
+  <h3 class="font-black text-lg">
+   <i class="fa-solid fa-circle-info text-indigo-600 mr-2"></i>
+   Petunjuk penggunaan
+  </h3>
+
+  <ol class="list-decimal ml-5 mt-2 text-slate-600 space-y-1 text-sm">
+   <li>Ikuti menu secara berurutan dari Tujuan hingga Refleksi.</li>
+   <li>Gunakan tab materi untuk berpindah subtopik.</li>
+   <li>Di simulasi, geser pengali skala untuk melihat perubahan ukuran.</li>
+   <li>Pilih level kuis, masukkan nama, lalu kerjakan 10 soal.</li>
+   <li>Gunakan papan refleksi untuk menyampaikan pengalaman belajarmu.</li>
+  </ol>
+ </div>
+</section>
+
+<!-- TUJUAN PEMBELAJARAN -->
+<section id="tujuan" class="view">
+
+ <div class="mb-6">
+  <div class="tag">01 • Arah pembelajaran</div>
+  <h1 class="text-3xl font-black mt-1">Tujuan Pembelajaran</h1>
+  <p class="text-slate-500 mt-2">
+   Setelah belajar, kamu diharapkan mampu memahami, menerapkan, dan bernalar menggunakan kesebangunan.
+  </p>
+ </div>
+
+ <div class="grid md:grid-cols-2 gap-4">
+
+  <div class="card p-6">
+   <div class="text-3xl text-indigo-600">
+    <i class="fa-solid fa-ruler-combined"></i>
+   </div>
+   <h3 class="font-black text-xl mt-3">Memahami konsep</h3>
+   <p class="text-slate-600 mt-2">
+    Menjelaskan kesebangunan persegi panjang melalui kesamaan sudut dan perbandingan sisi-sisi yang bersesuaian.
+   </p>
+  </div>
+
+  <div class="card p-6">
+   <div class="text-3xl text-cyan-600">
+    <i class="fa-solid fa-scale-balanced"></i>
+   </div>
+   <h3 class="font-black text-xl mt-3">Menggunakan rasio</h3>
+   <p class="text-slate-600 mt-2">
+    Menentukan panjang atau lebar persegi panjang lain dengan menggunakan faktor skala dan perbandingan sisi.
+   </p>
+  </div>
+
+  <div class="card p-6">
+   <div class="text-3xl text-pink-600">
+    <i class="fa-solid fa-calculator"></i>
+   </div>
+   <h3 class="font-black text-xl mt-3">Menghitung ukuran</h3>
+   <p class="text-slate-600 mt-2">
+    Menentukan luas dan keliling persegi panjang hasil pembesaran atau pengecilan.
+   </p>
+  </div>
+
+  <div class="card p-6">
+   <div class="text-3xl text-amber-500">
+    <i class="fa-solid fa-brain"></i>
+   </div>
+   <h3 class="font-black text-xl mt-3">Bernalar kontekstual</h3>
+   <p class="text-slate-600 mt-2">
+    Menyelesaikan masalah nyata terkait denah, foto, layar, desain, atau bidang tanah serta memeriksa kewajaran hasil.
+   </p>
+  </div>
+
+ </div>
+
+ <div class="card p-6 mt-5">
+  <h3 class="font-black">Indikator keberhasilan</h3>
+  <ul class="mt-3 space-y-2 text-slate-600">
+   <li>✓ Menentukan pasangan sisi yang bersesuaian.</li>
+   <li>✓ Menemukan faktor skala dari dua ukuran yang diketahui.</li>
+   <li>✓ Menghitung panjang, lebar, luas, dan keliling bangun sebangun.</li>
+   <li>✓ Menjelaskan mengapa luas berubah menurut kuadrat faktor skala.</li>
+  </ul>
+ </div>
+
+ <button class="btn btn-primary mt-5" onclick="go('pemantik')">
+  Lanjut ke Pemantik <i class="fa-solid fa-arrow-right"></i>
+ </button>
+</section>
+
+<!-- PERTANYAAN PEMANTIK -->
+<section id="pemantik" class="view">
+
+ <div class="tag">02 • Amati, tenangkan diri, dan bertanya</div>
+ <h1 class="text-3xl font-black mt-1 mb-2">Pertanyaan Pemantik</h1>
+
+ <p class="text-slate-500 mb-5">
+  Tarik napas perlahan, amati benda di sekitarmu, lalu buka kartu untuk menemukan tantangan.
+ </p>
+
+ <div class="grid md:grid-cols-2 gap-5">
+
+  <div class="flip" onclick="this.classList.toggle('flipped')">
+   <div class="flip-inner">
+    <div class="flip-front bg-gradient-to-br from-amber-300 to-orange-400 text-slate-900">
+     <i class="fa-solid fa-image text-4xl mb-4"></i>
+     <b class="text-xl">Kartu 1: Foto diperbesar</b>
+     <p class="mt-2">Klik untuk membuka pertanyaan</p>
+    </div>
+
+    <div class="flip-back">
+     <b class="text-lg">
+      Apa yang terjadi jika foto 4 × 6 cm diperbesar menjadi lebar 10 cm?
+     </b>
+     <p class="text-slate-600 mt-3">
+      Apakah tinggi foto ikut berubah? Bagaimana memastikan foto tidak tampak melebar atau gepeng?
+     </p>
+    </div>
+   </div>
+  </div>
+
+  <div class="flip" onclick="this.classList.toggle('flipped')">
+   <div class="flip-inner">
+    <div class="flip-front bg-gradient-to-br from-cyan-300 to-blue-400 text-slate-900">
+     <i class="fa-solid fa-map text-4xl mb-4"></i>
+     <b class="text-xl">Kartu 2: Denah taman</b>
+     <p class="mt-2">Klik untuk membuka pertanyaan</p>
+    </div>
+
+    <div class="flip-back">
+     <b class="text-lg">
+      Denah taman berbentuk 5 × 8 cm dibuat 3 kali lebih besar.
+     </b>
+     <p class="text-slate-600 mt-3">
+      Berapa ukuran denah baru? Apakah luasnya juga menjadi 3 kali? Jelaskan alasanmu.
+     </p>
+    </div>
+   </div>
+  </div>
+
+ </div>
+
+ <div class="card p-5 mt-6">
+  <h3 class="font-black">
+   <i class="fa-solid fa-spa text-green-600 mr-2"></i>
+   Mindfulness 30 detik
+  </h3>
+  <p class="text-slate-600 mt-2">
+   Duduk nyaman. Tarik napas selama 4 hitungan, tahan 2 hitungan, lalu embuskan selama 4 hitungan. Fokuskan pikiran pada satu pertanyaan: “Bagaimana bentuk dapat diperbesar tanpa berubah proporsi?”
+  </p>
+ </div>
+
+ <button class="btn btn-primary mt-5" onclick="go('materi')">
+  Jelajahi Materi <i class="fa-solid fa-arrow-right"></i>
+ </button>
+</section>
